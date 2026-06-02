@@ -1,4 +1,4 @@
-import { EventPayload, KeyEvent, MappedKeys, MODIFIERS, MouseButton, MouseButtonEvent, MouseMoveEvent, MouseWheelEvent, RawKey, RawKeyEvent } from "@/types/event";
+import { EventPayload, KeyEvent, MappedKeys, MODIFIERS, MouseButton, MouseButtonEvent, MouseMoveEvent, MouseWheelEvent, RawKey, RawKeyEvent, SHORTCUT_KEYS } from "@/types/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { tauriStorage } from "./storage";
@@ -218,8 +218,8 @@ const createKeyEventStore = createSyncedStore<KeyEventStore>(
             const state = get();
             if (state.filter === "modifiers") {
                 return pressedKeys.length === 1
-                    ? !MODIFIERS.has(event.name) // single non-modifier
-                    : !MODIFIERS.has(pressedKeys[0]); // combination not starting with modifier
+                    ? !MODIFIERS.has(event.name) && !SHORTCUT_KEYS.has(event.name) // single non-shortcut key
+                    : !MODIFIERS.has(pressedKeys[0]) && !SHORTCUT_KEYS.has(pressedKeys[0]); // combination not starting with shortcut key
             }
             else if (state.filter === "custom") {
                 return pressedKeys.length === 1

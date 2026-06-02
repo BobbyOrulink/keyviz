@@ -165,6 +165,21 @@ export const CustomFilter = () => {
             <ButtonKey rawKey={RawKey.Delete} />
           </div>
 
+          <div className="flex gap-2 justify-between w-full">
+            <ButtonKey rawKey={RawKey.F13} />
+            <ButtonKey rawKey={RawKey.F14} />
+            <ButtonKey rawKey={RawKey.F15} />
+            <ButtonKey rawKey={RawKey.F16} />
+            <ButtonKey rawKey={RawKey.F17} />
+            <ButtonKey rawKey={RawKey.F18} />
+            <ButtonKey rawKey={RawKey.F19} />
+            <ButtonKey rawKey={RawKey.F20} />
+            <ButtonKey rawKey={RawKey.F21} />
+            <ButtonKey rawKey={RawKey.F22} />
+            <ButtonKey rawKey={RawKey.F23} />
+            <ButtonKey rawKey={RawKey.F24} />
+          </div>
+
           {/* Row 2: Numbers */}
           <div className="flex gap-2 justify-between w-full">
             <ButtonKey rawKey={RawKey.BackQuote} />

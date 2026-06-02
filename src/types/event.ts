@@ -196,6 +196,21 @@ export const MODIFIERS = new Set<string>([
   RawKey.Function,
 ]);
 
+export const SHORTCUT_KEYS = new Set<string>([
+  RawKey.F13,
+  RawKey.F14,
+  RawKey.F15,
+  RawKey.F16,
+  RawKey.F17,
+  RawKey.F18,
+  RawKey.F19,
+  RawKey.F20,
+  RawKey.F21,
+  RawKey.F22,
+  RawKey.F23,
+  RawKey.F24,
+]);
+
 export class KeyEvent {
   name: string;
   pressedCount: number;

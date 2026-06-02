@@ -1,6 +1,6 @@
 use std::{sync::Mutex, thread};
 
-use rdev::{listen, Button, EventType};
+use rdev::{listen, Button, Event, EventType, Key};
 use serde::Serialize;
 use tauri::{menu::MenuItem, AppHandle, Emitter, Manager, Wry};
 
@@ -32,6 +32,34 @@ pub fn map_mouse_button(button: Button) -> MouseButton {
     }
 }
 
+fn extended_function_key_name(platform_code: u32, position_code: u32) -> Option<&'static str> {
+    match (platform_code, position_code) {
+        (0x7C, _) | (_, 0x64) => Some("F13"),
+        (0x7D, _) | (_, 0x65) => Some("F14"),
+        (0x7E, _) | (_, 0x66) => Some("F15"),
+        (0x7F, _) | (_, 0x67) => Some("F16"),
+        (0x80, _) | (_, 0x68) => Some("F17"),
+        (0x81, _) | (_, 0x69) => Some("F18"),
+        (0x82, _) | (_, 0x6A) => Some("F19"),
+        (0x83, _) | (_, 0x6B) => Some("F20"),
+        (0x84, _) | (_, 0x6C) => Some("F21"),
+        (0x85, _) | (_, 0x6D) => Some("F22"),
+        (0x86, _) | (_, 0x6E) => Some("F23"),
+        (0x87, _) | (_, 0x76) => Some("F24"),
+        _ => None,
+    }
+}
+
+fn key_name_from_event(event: &Event, key: Key) -> Option<String> {
+    let key_name = format!("{:?}", key);
+
+    if !key_name.contains('(') {
+        return Some(key_name);
+    }
+
+    extended_function_key_name(event.platform_code, event.position_code).map(str::to_string)
+}
+
 pub fn start_listener(app_handle: AppHandle, toggle_menu_item: MenuItem<Wry>) {
     thread::spawn(move || {
         println!("Starting global input listener...");
@@ -43,11 +71,9 @@ pub fn start_listener(app_handle: AppHandle, toggle_menu_item: MenuItem<Wry>) {
 
             // track pressed keys
             if let EventType::KeyPress(key) = event.event_type {
-                let key_name = format!("{:?}", key);
-                // If the name contains parenthesis (like "RawKey(123)", "Unknown()"), ignore it.
-                if key_name.contains('(') {
+                let Some(key_name) = key_name_from_event(&event, key) else {
                     return;
-                }
+                };
                 // if key is already marked as pressed, ignore repeat
                 if app_state.pressed_keys.contains(&key_name) {
                     return;
@@ -75,10 +101,9 @@ pub fn start_listener(app_handle: AppHandle, toggle_menu_item: MenuItem<Wry>) {
                     }
                 }
             } else if let EventType::KeyRelease(key) = event.event_type {
-                let key_name = format!("{:?}", key);
-                if key_name.contains('(') {
+                let Some(key_name) = key_name_from_event(&event, key) else {
                     return;
-                }
+                };
                 // remove key from pressed keys
                 app_state.pressed_keys.retain(|k| k != &key_name);
             }
@@ -88,13 +113,17 @@ pub fn start_listener(app_handle: AppHandle, toggle_menu_item: MenuItem<Wry>) {
                 return;
             }
             let input_event = match event.event_type {
-                EventType::KeyPress(key) => Some(InputEvent::KeyEvent {
-                    pressed: true,
-                    name: format!("{:?}", key),
+                EventType::KeyPress(key) => key_name_from_event(&event, key).map(|name| {
+                    InputEvent::KeyEvent {
+                        pressed: true,
+                        name,
+                    }
                 }),
-                EventType::KeyRelease(key) => Some(InputEvent::KeyEvent {
-                    pressed: false,
-                    name: format!("{:?}", key),
+                EventType::KeyRelease(key) => key_name_from_event(&event, key).map(|name| {
+                    InputEvent::KeyEvent {
+                        pressed: false,
+                        name,
+                    }
                 }),
                 EventType::ButtonPress(button) => Some(InputEvent::MouseButtonEvent {
                     pressed: true,

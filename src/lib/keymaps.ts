@@ -55,6 +55,18 @@ export const keymaps: Record<string, DisplayData> = {
     F10: { label: "F10", category: "function" },
     F11: { label: "F11", category: "function" },
     F12: { label: "F12", category: "function" },
+    F13: { label: "F13", category: "function" },
+    F14: { label: "F14", category: "function" },
+    F15: { label: "F15", category: "function" },
+    F16: { label: "F16", category: "function" },
+    F17: { label: "F17", category: "function" },
+    F18: { label: "F18", category: "function" },
+    F19: { label: "F19", category: "function" },
+    F20: { label: "F20", category: "function" },
+    F21: { label: "F21", category: "function" },
+    F22: { label: "F22", category: "function" },
+    F23: { label: "F23", category: "function" },
+    F24: { label: "F24", category: "function" },
     // ───────────── Navigation ─────────────
     PrintScreen: {
         label: "print screen",
